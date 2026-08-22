@@ -1,4 +1,4 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response, NextFunction } from "express";
 
 const app: Application = express();
 
@@ -6,9 +6,8 @@ const app: Application = express();
 app.use(express.json());
 
 // Route to check if the application is running
-app.get('/', (req: Request, res: Response) => {
-    res.status(200).json({ message: 'The application is running successfully!' });
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).json({ message: "The application is running successfully!" });
 });
-
 
 export default app;

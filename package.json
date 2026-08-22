@@ -1,0 +1,35 @@
+{
+  "name": "task-master",
+  "version": "1.0.0",
+  "description": "A collaborative task-tracking backend where teams can create, assign, and manage tasks with comments, attachments, and real-time updates — built with TypeScript, Node.js, Express, and JWT-based auth.",
+  "homepage": "https://github.com/maitrii-joshii/task-master#readme",
+  "bugs": {
+    "url": "https://github.com/maitrii-joshii/task-master/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maitrii-joshii/task-master.git"
+  },
+  "license": "ISC",
+  "author": "MJ",
+  "type": "commonjs",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.2.0",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.23.12",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.9.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "prisma": "^7.9.1"
+  }
+}

@@ -1,9 +1,17 @@
 import express, { Application, Request, Response } from "express";
+import routes from "./routes";
+import { errorMiddleware } from "./middleware/error.middleware";
 
 const app: Application = express();
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Use the imported routes
+app.use("/api/v1", routes);
+
+// Error handling middleware
+app.use(errorMiddleware);
 
 // Route to check if the application is running
 app.get("/", (req: Request, res: Response) => {

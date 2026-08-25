@@ -6,6 +6,8 @@ import {
   getProjectById,
   getProjects,
   deleteProject,
+  getProjectMembers,
+  removeProjectMember,
 } from "./project.service";
 
 export const createProjectController = async (
@@ -94,6 +96,44 @@ export const deleteProjectController = async (
     const projectId = req.params.id as string;
 
     await deleteProject(projectId, userId);
+
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProjectMembersController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.userId!;
+    const projectId = req.params.id as string;
+
+    const members = await getProjectMembers(projectId, userId);
+
+    res.status(200).json({
+      success: true,
+      data: members,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeProjectMemberController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const userId = req.userId!;
+    const projectId = req.params.id as string;
+    const memberUserId = req.params.userId as string;
+
+    await removeProjectMember(projectId, memberUserId);
 
     res.status(204).send();
   } catch (error) {

@@ -5,12 +5,24 @@ import { AppError } from "../../utils/appError";
 export const createProject = async (userId: string, input: unknown) => {
   const data = createProjectSchema.parse(input);
 
-  const project = await prisma.project.create({
-    data: {
-      name: data.name,
-      description: data.description,
-      ownerId: userId,
-    },
+  const project = await prisma.$transaction(async (tx) => {
+    const project = await tx.project.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        ownerId: userId,
+      },
+    });
+
+    await tx.projectMember.create({
+      data: {
+        projectId: project.id,
+        userId,
+        role: "OWNER",
+      },
+    });
+
+    return project;
   });
 
   return project;
@@ -108,6 +120,80 @@ export const deleteProject = async (projectId: string, userId: string) => {
   await prisma.project.delete({
     where: {
       id: projectId,
+    },
+  });
+};
+
+export const getProjectMembers = async (projectId: string, userId: string) => {
+  const project = await prisma.project.findUnique({
+    where: {
+      id: projectId,
+    },
+  });
+
+  if (!project) {
+    throw new AppError("Project not found", 404);
+  }
+
+  const membership = await prisma.projectMember.findUnique({
+    where: {
+      projectId_userId: {
+        projectId,
+        userId,
+      },
+    },
+  });
+
+  if (!membership) {
+    throw new AppError("You are not a member of this project", 403);
+  }
+
+  const members = await prisma.projectMember.findMany({
+    where: {
+      projectId,
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          createdAt: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  return members;
+};
+
+export const removeProjectMember = async (projectId: string, userId: string) => {
+  const member = await prisma.projectMember.findUnique({
+    where: {
+      projectId_userId: {
+        projectId,
+        userId,
+      },
+    },
+  });
+
+  if (!member) {
+    throw new AppError("Project member not found", 404);
+  }
+
+  if (member.role === "OWNER") {
+    throw new AppError("Project owner cannot be removed", 400);
+  }
+
+  await prisma.projectMember.delete({
+    where: {
+      projectId_userId: {
+        projectId,
+        userId,
+      },
     },
   });
 };

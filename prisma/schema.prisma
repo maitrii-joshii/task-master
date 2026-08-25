@@ -30,6 +30,9 @@ model User {
 
   createdTasks  Task[] @relation("TaskCreator")
   assignedTasks Task[] @relation("TaskAssignee")
+
+  receivedInvitations ProjectInvitation[] @relation("InvitedUser")
+  sentInvitations     ProjectInvitation[] @relation("InvitedBy")
 }
 
 model RefreshToken {
@@ -49,7 +52,6 @@ model RefreshToken {
 
 enum ProjectMemberRole {
   OWNER
-  ADMIN
   MEMBER
 }
 
@@ -61,8 +63,9 @@ model Project {
   ownerId String
   owner   User   @relation("ProjectOwner", fields: [ownerId], references: [id])
 
-  members ProjectMember[]
-  tasks   Task[]
+  members     ProjectMember[]
+  tasks       Task[]
+  invitations ProjectInvitation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,4 +122,32 @@ model Task {
   @@index([creatorId])
   @@index([assigneeId])
   @@index([status])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model ProjectInvitation {
+  id String @id @default(uuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  invitedUserId String
+  invitedUser   User   @relation("InvitedUser", fields: [invitedUserId], references: [id], onDelete: Cascade)
+
+  invitedById String
+  invitedBy   User   @relation("InvitedBy", fields: [invitedById], references: [id], onDelete: Cascade)
+
+  status InvitationStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([projectId, invitedUserId])
+  @@index([invitedUserId])
+  @@index([projectId])
 }

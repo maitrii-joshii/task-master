@@ -18,7 +18,9 @@ module.exports = [
       },
     },
   },
+
   js.configs.recommended,
+
   {
     files: ["src/**/*.ts", "tests/**/*.ts"],
     languageOptions: {
@@ -39,16 +41,23 @@ module.exports = [
     },
     rules: {
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/no-explicit-any": "warn",
       "no-console": "off",
       "prettier/prettier": "warn",
     },
   },
+
   {
     files: ["tests/**/*.ts"],
     languageOptions: {
       globals: {
+        jest: "readonly",
         describe: "readonly",
         it: "readonly",
         test: "readonly",
@@ -60,7 +69,9 @@ module.exports = [
       },
     },
   },
+
   prettierConfig,
+
   {
     ignores: ["node_modules", "dist"],
   },

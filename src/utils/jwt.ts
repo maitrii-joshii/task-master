@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { randomUUID } from "crypto";
 import { jwtConfig } from "../config/jwt";
 
 export const generateAccessToken = (userId: string): string => {
@@ -17,6 +18,7 @@ export const generateRefreshToken = (userId: string): string => {
   return jwt.sign(
     {
       userId,
+      jti: randomUUID(),
     },
     jwtConfig.refreshSecret,
     {

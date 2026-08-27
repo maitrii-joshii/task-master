@@ -1,7 +1,8 @@
 import express, { Application, Request, Response } from "express";
+import swaggerUi from "swagger-ui-express";
 
 import routes from "./routes";
-
+import { swaggerSpec } from "./config/swagger";
 import { errorMiddleware } from "./middleware/error.middleware";
 
 const app: Application = express();
@@ -11,6 +12,9 @@ app.use(express.json());
 
 // API routes
 app.use("/api/v1", routes);
+
+// Swagger API documentation
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Application status route
 app.get("/", (_req: Request, res: Response) => {
@@ -27,7 +31,7 @@ app.get("/health", (_req: Request, res: Response) => {
   });
 });
 
-// Error handling middleware — MUST be last
+// Error handling middleware
 app.use(errorMiddleware);
 
 export default app;

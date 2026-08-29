@@ -1,6 +1,6 @@
-import prisma from "../../config/prisma";
+import prisma from "../../../config/prisma";
 import { createInvitationSchema } from "./invitation.schema";
-import { AppError } from "../../utils/appError";
+import { AppError } from "../../../utils/appError";
 
 export const createInvitation = async (projectId: string, invitedById: string, input: unknown) => {
   const { invitedUserId } = createInvitationSchema.parse(input);

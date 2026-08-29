@@ -1,5 +1,5 @@
 import prisma from "../../../src/config/prisma";
-import { getCurrentUser, updateCurrentUser } from "../../../src/modules/users/users.service";
+import { getCurrentUser, updateCurrentUser } from "../../../src/modules/users/user.service";
 import { AppError } from "../../../src/utils/appError";
 
 jest.mock("../../../src/config/prisma", () => ({

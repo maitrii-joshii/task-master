@@ -1,6 +1,6 @@
 import { Router } from "express";
 import authRoutes from "../modules/auth/auth.routes";
-import userRoutes from "../modules/users/users.routes";
+import userRoutes from "../modules/users/user.routes";
 import projectRoutes from "../modules/projects/project.routes";
 import taskRoutes from "../modules/tasks/task.routes";
 

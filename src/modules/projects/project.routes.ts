@@ -14,7 +14,7 @@ import {
   createInvitationController,
   acceptInvitationController,
   rejectInvitationController,
-} from "./invitation.controller";
+} from "../projects/invitations/invitation.controller";
 
 import { authenticate } from "../../middleware/auth.middleware";
 import { requireProjectRole } from "../../middleware/projectAuthorization.middleware";

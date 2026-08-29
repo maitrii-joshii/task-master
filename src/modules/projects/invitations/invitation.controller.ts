@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { createInvitation, acceptInvitation, rejectInvitation } from "./invitation.service";
-import { AuthenticatedRequest } from "../../middleware/auth.middleware";
+import { AuthenticatedRequest } from "../../../middleware/auth.middleware";
 
 export const createInvitationController = async (
   req: AuthenticatedRequest,

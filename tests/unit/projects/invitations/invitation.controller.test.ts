@@ -1,27 +1,32 @@
 import { Response, NextFunction } from "express";
-import { AuthenticatedRequest } from "../../../src/middleware/auth.middleware";
+
+import { AuthenticatedRequest } from "../../../../src/middleware/auth.middleware";
+
 import {
   createInvitation,
   acceptInvitation,
   rejectInvitation,
-} from "../../../src/modules/projects/invitation.service";
+} from "../../../../src/modules/projects/invitations/invitation.service";
+
 import {
   createInvitationController,
   acceptInvitationController,
   rejectInvitationController,
-} from "../../../src/modules/projects/invitation.controller";
+} from "../../../../src/modules/projects/invitations/invitation.controller";
 
-jest.mock("../../../src/modules/projects/invitation.service", () => ({
+jest.mock("../../../../src/modules/projects/invitations/invitation.service", () => ({
   createInvitation: jest.fn(),
   acceptInvitation: jest.fn(),
   rejectInvitation: jest.fn(),
 }));
 
 const mockedCreateInvitation = createInvitation as jest.MockedFunction<typeof createInvitation>;
+
 const mockedAcceptInvitation = acceptInvitation as jest.MockedFunction<typeof acceptInvitation>;
+
 const mockedRejectInvitation = rejectInvitation as jest.MockedFunction<typeof rejectInvitation>;
 
-const createResponseMock = () => {
+const createResponseMock = (): Response => {
   const res = {
     status: jest.fn(),
     json: jest.fn(),
@@ -82,11 +87,14 @@ describe("Invitation Controllers", () => {
       await createInvitationController(req, res, next);
 
       expect(mockedCreateInvitation).toHaveBeenCalledWith(projectId, req.userId, req.body);
+
       expect(res.status).toHaveBeenCalledWith(201);
+
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         data: invitation,
       });
+
       expect(next).not.toHaveBeenCalled();
     });
 
@@ -139,11 +147,14 @@ describe("Invitation Controllers", () => {
       await acceptInvitationController(req, res, next);
 
       expect(mockedAcceptInvitation).toHaveBeenCalledWith(invitationId, req.userId);
+
       expect(res.status).toHaveBeenCalledWith(200);
+
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         data: result,
       });
+
       expect(next).not.toHaveBeenCalled();
     });
 
@@ -186,11 +197,14 @@ describe("Invitation Controllers", () => {
       await rejectInvitationController(req, res, next);
 
       expect(mockedRejectInvitation).toHaveBeenCalledWith(invitationId, req.userId);
+
       expect(res.status).toHaveBeenCalledWith(200);
+
       expect(res.json).toHaveBeenCalledWith({
         success: true,
         data: invitation,
       });
+
       expect(next).not.toHaveBeenCalled();
     });
 

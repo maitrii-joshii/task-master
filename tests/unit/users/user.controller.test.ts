@@ -1,10 +1,10 @@
 import { Response, NextFunction } from "express";
 
 import { AuthenticatedRequest } from "../../../src/middleware/auth.middleware";
-import { getUser, updateUser } from "../../../src/modules/users/users.controller";
-import { getCurrentUser, updateCurrentUser } from "../../../src/modules/users/users.service";
+import { getUser, updateUser } from "../../../src/modules/users/user.controller";
+import { getCurrentUser, updateCurrentUser } from "../../../src/modules/users/user.service";
 
-jest.mock("../../../src/modules/users/users.service", () => ({
+jest.mock("../../../src/modules/users/user.service", () => ({
   getCurrentUser: jest.fn(),
   updateCurrentUser: jest.fn(),
 }));

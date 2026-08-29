@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -35,6 +33,7 @@ model User {
   sentInvitations     ProjectInvitation[] @relation("InvitedBy")
 
   comments Comment[]
+  uploadedAttachments Attachment[]
 }
 
 model RefreshToken {
@@ -117,7 +116,8 @@ model Task {
   assigneeId String?
   assignee   User?   @relation("TaskAssignee", fields: [assigneeId], references: [id])
 
-  comments Comment[]
+  comments    Comment[]
+  attachments Attachment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -171,4 +171,25 @@ model Comment {
 
   @@index([taskId])
   @@index([authorId])
+}
+
+model Attachment {
+  id String @id @default(uuid())
+
+  fileName    String
+  fileUrl     String
+  storageKey  String
+  mimeType    String
+  fileSize    Int
+
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User   @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([taskId])
+  @@index([uploadedById])
 }

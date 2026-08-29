@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "../../middleware/auth.middleware";
-import { getUser, updateUser } from "./users.controller";
+import { getUser, updateUser } from "./user.controller";
 
 /**
  * @swagger

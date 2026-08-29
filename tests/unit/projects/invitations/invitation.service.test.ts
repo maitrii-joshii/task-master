@@ -1,12 +1,12 @@
-import prisma from "../../../src/config/prisma";
+import prisma from "../../../../src/config/prisma";
 import {
   createInvitation,
   acceptInvitation,
   rejectInvitation,
-} from "../../../src/modules/projects/invitation.service";
-import { AppError } from "../../../src/utils/appError";
+} from "../../../../src/modules/projects/invitations/invitation.service";
+import { AppError } from "../../../../src/utils/appError";
 
-jest.mock("../../../src/config/prisma", () => ({
+jest.mock("../../../../src/config/prisma", () => ({
   __esModule: true,
   default: {
     project: {

@@ -1,6 +1,5 @@
 import express, { Application, Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
-
 import routes from "./routes";
 import { swaggerSpec } from "./config/swagger";
 import { errorMiddleware } from "./middleware/error.middleware";

@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 import { AuthenticatedRequest } from "../../middleware/auth.middleware";
-import { getCurrentUser, updateCurrentUser } from "./users.service";
-import { updateProfileSchema } from "./users.schema";
+import { getCurrentUser, updateCurrentUser } from "./user.service";
+import { updateProfileSchema } from "./user.schema";
 
 export const getUser = async (
   req: AuthenticatedRequest,

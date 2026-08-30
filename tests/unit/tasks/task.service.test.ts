@@ -1,29 +1,61 @@
 import { AppError } from "../../../src/utils/appError";
 import prisma from "../../../src/config/prisma";
-import {
-  createTask,
-  getTaskById,
-  getTasks,
-  updateTask,
-  deleteTask,
-  assignTask,
-  updateTaskStatus,
-} from "../../../src/modules/tasks/task.service";
 import { TaskStatus } from "../../../src/generated/prisma/enums";
+
+// ============================================================
+// MOCK REDIS
+// ============================================================
+//
+// Redis is NOT tested in this unit test.
+// We mock Redis so task service tests never connect to
+// a real Redis instance.
+//
+// Redis behavior should have its own dedicated tests if needed.
+// ============================================================
+
+jest.mock("../../../src/services/redis", () => ({
+  __esModule: true,
+
+  getCache: jest.fn().mockResolvedValue(null),
+
+  setCache: jest.fn().mockResolvedValue(undefined),
+
+  invalidateCacheByPrefix: jest.fn().mockResolvedValue(undefined),
+}));
+
+// ============================================================
+// MOCK WEBSOCKET MANAGER
+// ============================================================
+
+jest.mock("../../../src/webSocket/webSocket.manager", () => ({
+  __esModule: true,
+
+  websocketManager: {
+    sendToUser: jest.fn(),
+  },
+}));
+
+// ============================================================
+// MOCK PRISMA
+// ============================================================
 
 jest.mock("../../../src/config/prisma", () => ({
   __esModule: true,
+
   default: {
     project: {
       findUnique: jest.fn(),
     },
+
     projectMember: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
     },
+
     user: {
       findUnique: jest.fn(),
     },
+
     task: {
       create: jest.fn(),
       findUnique: jest.fn(),
@@ -35,17 +67,40 @@ jest.mock("../../../src/config/prisma", () => ({
   },
 }));
 
+// ============================================================
+// IMPORT SERVICE AFTER MOCKS
+// ============================================================
+
+import {
+  createTask,
+  getTaskById,
+  getTasks,
+  updateTask,
+  deleteTask,
+  assignTask,
+  updateTaskStatus,
+} from "../../../src/modules/tasks/task.service";
+
+import { websocketManager } from "../../../src/webSocket/webSocket.manager";
+
+// ============================================================
+// MOCK TYPES
+// ============================================================
+
 const mockPrisma = prisma as unknown as {
   project: {
     findUnique: jest.Mock;
   };
+
   projectMember: {
     findUnique: jest.Mock;
     findMany: jest.Mock;
   };
+
   user: {
     findUnique: jest.Mock;
   };
+
   task: {
     create: jest.Mock;
     findUnique: jest.Mock;
@@ -55,6 +110,12 @@ const mockPrisma = prisma as unknown as {
     delete: jest.Mock;
   };
 };
+
+const mockSendToUser = websocketManager.sendToUser as jest.Mock;
+
+// ============================================================
+// TEST SUITE
+// ============================================================
 
 describe("Task Service", () => {
   const userId = "550e8400-e29b-41d4-a716-446655440001";
@@ -84,7 +145,24 @@ describe("Task Service", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Redis is intentionally mocked and disabled for unit tests.
+    // These defaults prevent any real Redis connection.
+    jest.requireMock("../../../src/services/redis").getCache.mockResolvedValue(null);
+
+    jest.requireMock("../../../src/services/redis").setCache.mockResolvedValue(undefined);
+
+    jest
+      .requireMock("../../../src/services/redis")
+      .invalidateCacheByPrefix.mockResolvedValue(undefined);
+
+    // WebSocket default behavior
+    mockSendToUser.mockImplementation(() => undefined);
   });
+
+  // ============================================================
+  // CREATE TASK
+  // ============================================================
 
   describe("createTask", () => {
     it("should create a personal task successfully", async () => {
@@ -246,8 +324,18 @@ describe("Task Service", () => {
       });
 
       expect(result).toEqual(createdTask);
+
+      expect(mockSendToUser).toHaveBeenCalledWith(assigneeId, {
+        type: "TASK_CREATED",
+        message: "A new task has been created for you",
+        data: createdTask,
+      });
     });
   });
+
+  // ============================================================
+  // GET TASK BY ID
+  // ============================================================
 
   describe("getTaskById", () => {
     it("should return a task when it exists", async () => {
@@ -321,6 +409,10 @@ describe("Task Service", () => {
     });
   });
 
+  // ============================================================
+  // GET TASKS
+  // ============================================================
+
   describe("getTasks", () => {
     it("should return visible tasks with pagination", async () => {
       const tasks = [personalTask, projectTask];
@@ -359,7 +451,7 @@ describe("Task Service", () => {
       });
     });
 
-    it("should apply status, project, assignee and creator filters", async () => {
+    it("should apply status, project, assignee, creator and search filters", async () => {
       mockPrisma.projectMember.findMany.mockResolvedValue([
         {
           projectId,
@@ -415,6 +507,7 @@ describe("Task Service", () => {
 
     it("should apply pagination and sorting", async () => {
       mockPrisma.projectMember.findMany.mockResolvedValue([]);
+
       mockPrisma.task.findMany.mockResolvedValue([]);
       mockPrisma.task.count.mockResolvedValue(25);
 
@@ -429,6 +522,7 @@ describe("Task Service", () => {
 
       expect(findManyCall.skip).toBe(5);
       expect(findManyCall.take).toBe(5);
+
       expect(findManyCall.orderBy).toEqual({
         title: "asc",
       });
@@ -441,6 +535,10 @@ describe("Task Service", () => {
       });
     });
   });
+
+  // ============================================================
+  // UPDATE TASK
+  // ============================================================
 
   describe("updateTask", () => {
     it("should throw 404 when task does not exist", async () => {
@@ -506,9 +604,11 @@ describe("Task Service", () => {
       const updatedTask = {
         ...projectTask,
         title: "Updated Project Task",
+        assigneeId,
       };
 
       mockPrisma.task.findUnique.mockResolvedValue(projectTask);
+
       mockPrisma.projectMember.findUnique
         .mockResolvedValueOnce({
           projectId,
@@ -593,6 +693,10 @@ describe("Task Service", () => {
     });
   });
 
+  // ============================================================
+  // DELETE TASK
+  // ============================================================
+
   describe("deleteTask", () => {
     it("should throw 404 when task does not exist", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(null);
@@ -600,7 +704,7 @@ describe("Task Service", () => {
       await expect(deleteTask(taskId, userId)).rejects.toEqual(new AppError("Task not found", 404));
     });
 
-    it("should throw 403 when user is not the creator of a personal task", async () => {
+    it("should throw 403 when user is not creator of personal task", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(personalTask);
 
       await expect(deleteTask(taskId, anotherUserId)).rejects.toEqual(
@@ -610,7 +714,7 @@ describe("Task Service", () => {
       expect(mockPrisma.task.delete).not.toHaveBeenCalled();
     });
 
-    it("should delete a personal task when user is the creator", async () => {
+    it("should delete a personal task when user is creator", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(personalTask);
       mockPrisma.task.delete.mockResolvedValue(personalTask);
 
@@ -655,6 +759,10 @@ describe("Task Service", () => {
     });
   });
 
+  // ============================================================
+  // ASSIGN TASK
+  // ============================================================
+
   describe("assignTask", () => {
     it("should throw 404 when task does not exist", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(null);
@@ -664,7 +772,7 @@ describe("Task Service", () => {
       );
     });
 
-    it("should throw 403 when non-creator tries to assign a personal task", async () => {
+    it("should throw 403 when non-creator tries to assign personal task", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(personalTask);
 
       await expect(assignTask(taskId, anotherUserId, assigneeId)).rejects.toEqual(
@@ -690,9 +798,11 @@ describe("Task Service", () => {
       };
 
       mockPrisma.task.findUnique.mockResolvedValue(personalTask);
+
       mockPrisma.user.findUnique.mockResolvedValue({
         id: assigneeId,
       });
+
       mockPrisma.task.update.mockResolvedValue(updatedTask);
 
       const result = await assignTask(taskId, userId, assigneeId);
@@ -711,6 +821,7 @@ describe("Task Service", () => {
 
     it("should throw 403 when project requester is not a member", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(projectTask);
+
       mockPrisma.projectMember.findUnique.mockResolvedValue(null);
 
       await expect(assignTask(taskId, anotherUserId, assigneeId)).rejects.toEqual(
@@ -761,8 +872,21 @@ describe("Task Service", () => {
       const result = await assignTask(taskId, userId, assigneeId);
 
       expect(result).toEqual(updatedTask);
+
+      expect(mockPrisma.task.update).toHaveBeenCalledWith({
+        where: {
+          id: taskId,
+        },
+        data: {
+          assigneeId,
+        },
+      });
     });
   });
+
+  // ============================================================
+  // UPDATE TASK STATUS
+  // ============================================================
 
   describe("updateTaskStatus", () => {
     it("should throw 404 when task does not exist", async () => {
@@ -773,7 +897,7 @@ describe("Task Service", () => {
       );
     });
 
-    it("should throw 400 when task already has the requested status", async () => {
+    it("should throw 400 when task already has requested status", async () => {
       mockPrisma.task.findUnique.mockResolvedValue({
         ...personalTask,
         status: TaskStatus.COMPLETED,
@@ -784,7 +908,7 @@ describe("Task Service", () => {
       );
     });
 
-    it("should throw 403 when user cannot update a personal task status", async () => {
+    it("should throw 403 when user cannot update personal task status", async () => {
       mockPrisma.task.findUnique.mockResolvedValue(personalTask);
 
       await expect(updateTaskStatus(taskId, anotherUserId, TaskStatus.COMPLETED)).rejects.toEqual(
@@ -792,7 +916,7 @@ describe("Task Service", () => {
       );
     });
 
-    it("should update a personal task status successfully", async () => {
+    it("should update personal task status successfully", async () => {
       const updatedTask = {
         ...personalTask,
         status: TaskStatus.COMPLETED,
@@ -824,7 +948,7 @@ describe("Task Service", () => {
       );
     });
 
-    it("should update a project task status for a project member", async () => {
+    it("should update project task status for project member", async () => {
       const updatedTask = {
         ...projectTask,
         status: TaskStatus.IN_PROGRESS,

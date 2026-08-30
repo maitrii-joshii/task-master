@@ -1,10 +1,18 @@
 import express, { Application, Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import routes from "./routes";
+import helmet from "helmet";
+import cors from "cors";
 import { swaggerSpec } from "./config/swagger";
 import { errorMiddleware } from "./middleware/error.middleware";
 
 const app: Application = express();
+
+// Security middleware
+app.use(helmet());
+
+// CORS middleware
+app.use(cors());
 
 // Parse JSON bodies
 app.use(express.json());

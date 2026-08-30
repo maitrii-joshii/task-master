@@ -1,4 +1,5 @@
 import { Response, NextFunction } from "express";
+
 import {
   createTask,
   getTaskById,
@@ -8,15 +9,22 @@ import {
   assignTask,
   updateTaskStatus,
 } from "./task.service";
+
 import {
   createTaskSchema,
   updateTaskSchema,
   assignTaskSchema,
   updateTaskStatusSchema,
   taskFilterSchema,
+  generateTaskDescriptionSchema,
 } from "./task.schema";
-import { AuthenticatedRequest } from "../../middleware/auth.middleware";
 
+import { AuthenticatedRequest } from "../../middleware/auth.middleware";
+import { generateTaskDescription } from "../../services/ai";
+
+/**
+ * Create task
+ */
 export const createTaskController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -48,6 +56,62 @@ export const createTaskController = async (
   }
 };
 
+/**
+ * Generate task description using AI
+ */
+export const generateTaskDescriptionController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    // -----------------------------------------
+    // Check authentication
+    // -----------------------------------------
+
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        error: {
+          message: "Authentication required",
+        },
+      });
+      return;
+    }
+
+    // -----------------------------------------
+    // Validate request
+    // -----------------------------------------
+
+    const { title } = generateTaskDescriptionSchema.parse(req.body);
+
+    // -----------------------------------------
+    // Generate description using AI
+    // -----------------------------------------
+
+    const description = await generateTaskDescription(title);
+
+    // -----------------------------------------
+    // Return generated description
+    // -----------------------------------------
+
+    res.status(200).json({
+      success: true,
+      data: {
+        title,
+        description,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get task by ID
+ */
 export const getTaskByIdController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -79,6 +143,9 @@ export const getTaskByIdController = async (
   }
 };
 
+/**
+ * Get tasks
+ */
 export const getTasksController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -111,6 +178,9 @@ export const getTasksController = async (
   }
 };
 
+/**
+ * Update task
+ */
 export const updateTaskController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -144,6 +214,9 @@ export const updateTaskController = async (
   }
 };
 
+/**
+ * Delete task
+ */
 export const deleteTaskController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -172,6 +245,9 @@ export const deleteTaskController = async (
   }
 };
 
+/**
+ * Assign task
+ */
 export const assignTaskController = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -205,6 +281,9 @@ export const assignTaskController = async (
   }
 };
 
+/**
+ * Update task status
+ */
 export const updateTaskStatusController = async (
   req: AuthenticatedRequest,
   res: Response,

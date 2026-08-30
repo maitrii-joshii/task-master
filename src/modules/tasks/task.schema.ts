@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { TaskStatus } from "../../generated/prisma/enums";
 
 export const createTaskSchema = z.object({
@@ -66,4 +67,15 @@ export const taskFilterSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
 
   limit: z.coerce.number().int().min(1).max(100).default(10),
+});
+
+/**
+ * Validate input for AI-generated task description
+ */
+export const generateTaskDescriptionSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Title is required")
+    .max(90, "Title must not exceed 90 characters"),
 });

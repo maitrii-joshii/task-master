@@ -35,7 +35,6 @@ const author = {
   id: userId,
   name: "Test User",
   email: "test@example.com",
-  avatarUrl: null,
 };
 
 const comment = {
@@ -98,7 +97,6 @@ describe("Comment Service", () => {
               id: true,
               name: true,
               email: true,
-              avatarUrl: true,
             },
           },
         },
@@ -201,7 +199,6 @@ describe("Comment Service", () => {
               id: true,
               name: true,
               email: true,
-              avatarUrl: true,
             },
           },
         },
@@ -305,7 +302,6 @@ describe("Comment Service", () => {
               id: true,
               name: true,
               email: true,
-              avatarUrl: true,
             },
           },
           task: {
@@ -393,7 +389,6 @@ describe("Comment Service", () => {
               id: true,
               name: true,
               email: true,
-              avatarUrl: true,
             },
           },
         },

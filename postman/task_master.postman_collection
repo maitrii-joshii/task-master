@@ -1,0 +1,1130 @@
+{
+  "info": {
+    "_postman_id": "df4272dd-0ad2-4aec-9b18-42f1d220ccd7",
+    "name": "Airtribe",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47078337",
+    "_collection_link": "https://go.postman.co/collection/47078337-df4272dd-0ad2-4aec-9b18-42f1d220ccd7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "TaskMaster",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "registerUser",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Noah Brown\",\r\n  \"email\": \"noah.brown@taskmaster.com\",\r\n  \"password\": \"Password123#\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/auth/register",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "loginUser",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"email\": \"eleanor.vance@taskmaster.com\",\r\n  \"password\": \"Password123#\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/auth/login",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "refresh",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"refreshToken\": \"{{refresh_token}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/auth/refresh",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "logoutUser",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"refreshToken\": \"{{refresh_token}}\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/auth/logout",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "User",
+          "item": [
+            {
+              "name": "getUser",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/users/profile",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "users",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateUser",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Emma Williams User\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/users/profile",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "users",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Project",
+          "item": [
+            {
+              "name": "Invitation",
+              "item": [
+                {
+                  "name": "createProjectInvitation",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"invitedUserId\": \"10baaa81-b103-411c-a6b9-ed7d80a74412\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/projects/d05b0668-3784-4490-bfd1-5368cdac8f0c/invitations",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "d05b0668-3784-4490-bfd1-5368cdac8f0c",
+                        "invitations"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "acceptProjectInvitation",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/projects/invitations/f65a0d50-62dd-4f5f-9cd3-6ed523d80a06/accept",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "invitations",
+                        "f65a0d50-62dd-4f5f-9cd3-6ed523d80a06",
+                        "accept"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "rejectProjectInvitation",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/projects/invitations/1f11c76b-e512-4d46-aa58-84561fffa53b/reject",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "projects",
+                        "invitations",
+                        "1f11c76b-e512-4d46-aa58-84561fffa53b",
+                        "reject"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "createProject",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Terra Data Pipeline\",\r\n  \"description\": \"Initiative focused on data pipeline for the Terra program\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateProject",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Drift Customer Portal Project\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects/2fd51c70-e010-4b32-8db1-da60e68e0a74",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "2fd51c70-e010-4b32-8db1-da60e68e0a74"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getProjectById",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects/2fd51c70-e010-4b32-8db1-da60e68e0a74",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "2fd51c70-e010-4b32-8db1-da60e68e0a74"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getProjects",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteProject",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects/e5ff273c-cce9-4e38-958a-cb5f250c26b2",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "e5ff273c-cce9-4e38-958a-cb5f250c26b2"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getProjectMembers",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects/d05b0668-3784-4490-bfd1-5368cdac8f0c/members",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "d05b0668-3784-4490-bfd1-5368cdac8f0c",
+                    "members"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteProjectMember",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/projects/d717d16d-4e56-48a8-948a-8ba179e6f3b7/members/41d7747c-feed-489a-be67-0d2a66ca38b9",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "projects",
+                    "d717d16d-4e56-48a8-948a-8ba179e6f3b7",
+                    "members",
+                    "41d7747c-feed-489a-be67-0d2a66ca38b9"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Task",
+          "item": [
+            {
+              "name": "Comment",
+              "item": [
+                {
+                  "name": "createComment",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"content\": \"This task needs to be completed before next Friday.\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/e287f02a-2b40-4281-b56b-c8445d2bc2fe/comments",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "e287f02a-2b40-4281-b56b-c8445d2bc2fe",
+                        "comments"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "updateComment",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "PATCH",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"content\": \"This task needs to be completed by Thursday.\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/e287f02a-2b40-4281-b56b-c8445d2bc2fe/comments/7ca6a3da-3f7b-4cfb-bcc2-fbb706d4d967",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "e287f02a-2b40-4281-b56b-c8445d2bc2fe",
+                        "comments",
+                        "7ca6a3da-3f7b-4cfb-bcc2-fbb706d4d967"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "getComments",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/e287f02a-2b40-4281-b56b-c8445d2bc2fe/comments",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "e287f02a-2b40-4281-b56b-c8445d2bc2fe",
+                        "comments"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "getCommentById",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/e287f02a-2b40-4281-b56b-c8445d2bc2fe/comments/1def5c4e-1a35-4342-af7c-af73f9ec05c2",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "e287f02a-2b40-4281-b56b-c8445d2bc2fe",
+                        "comments",
+                        "1def5c4e-1a35-4342-af7c-af73f9ec05c2"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "deleteComment",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/e287f02a-2b40-4281-b56b-c8445d2bc2fe/comments/1def5c4e-1a35-4342-af7c-af73f9ec05c2",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "e287f02a-2b40-4281-b56b-c8445d2bc2fe",
+                        "comments",
+                        "1def5c4e-1a35-4342-af7c-af73f9ec05c2"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "Attachment",
+              "item": [
+                {
+                  "name": "uploadAttachment",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "file",
+                          "type": "file",
+                          "src": [
+                            "/C:/Users/MJ/Downloads/Error.txt"
+                          ]
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/af6f3972-081d-45f0-a1c5-232f4445a052/attachments",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "af6f3972-081d-45f0-a1c5-232f4445a052",
+                        "attachments"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "getAttachments",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/af6f3972-081d-45f0-a1c5-232f4445a052/attachments",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "af6f3972-081d-45f0-a1c5-232f4445a052",
+                        "attachments"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "getAttachmentById",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/af6f3972-081d-45f0-a1c5-232f4445a052/attachments/34f48dba-a113-45f7-8e66-5e8de5e398e7",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "af6f3972-081d-45f0-a1c5-232f4445a052",
+                        "attachments",
+                        "34f48dba-a113-45f7-8e66-5e8de5e398e7"
+                      ]
+                    }
+                  },
+                  "response": []
+                },
+                {
+                  "name": "deleteAttachment",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "DELETE",
+                    "header": [],
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/af6f3972-081d-45f0-a1c5-232f4445a052/attachments/34f48dba-a113-45f7-8e66-5e8de5e398e7",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "af6f3972-081d-45f0-a1c5-232f4445a052",
+                        "attachments",
+                        "34f48dba-a113-45f7-8e66-5e8de5e398e7"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "AI",
+              "item": [
+                {
+                  "name": "generateTaskDescription",
+                  "request": {
+                    "auth": {
+                      "type": "bearer",
+                      "bearer": [
+                        {
+                          "key": "token",
+                          "value": "{{access_token}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"title\": \"Implement JWT authentication\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{API_HOST}}{{API_VERSION}}/tasks/ai/generate-description",
+                      "host": [
+                        "{{API_HOST}}{{API_VERSION}}"
+                      ],
+                      "path": [
+                        "tasks",
+                        "ai",
+                        "generate-description"
+                      ]
+                    }
+                  },
+                  "response": []
+                }
+              ]
+            },
+            {
+              "name": "createTask",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"title\": \"Debug file upload feature\",\r\n  \"description\": \"Track down and fix bugs in the file upload feature\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getTasks",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "IN_PROGRESS",
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": "user",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "getTaskById",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks/4a71004f-08fb-4e87-a52c-bee7fe3ac791",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks",
+                    "4a71004f-08fb-4e87-a52c-bee7fe3ac791"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateTask",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"title\": \"Debug push notifications\",\r\n  \"description\": \"Investigate and resolve reported issues with push notification delivery\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks/4a71004f-08fb-4e87-a52c-bee7fe3ac791",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks",
+                    "4a71004f-08fb-4e87-a52c-bee7fe3ac791"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "deleteTask",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks/3a7c8a71-c0f7-4acd-8f37-ec1bb12aaded",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks",
+                    "3a7c8a71-c0f7-4acd-8f37-ec1bb12aaded"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "assignTask",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"assigneeId\": \"029b086f-f4cd-414e-97f8-9b9581c1555a\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks/e287f02a-2b40-4281-b56b-c8445d2bc2fe/assign",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks",
+                    "e287f02a-2b40-4281-b56b-c8445d2bc2fe",
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "updateTaskStatus",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{access_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"status\": \"COMPLETED\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{API_HOST}}{{API_VERSION}}/tasks/4a71004f-08fb-4e87-a52c-bee7fe3ac791/status",
+                  "host": [
+                    "{{API_HOST}}{{API_VERSION}}"
+                  ],
+                  "path": [
+                    "tasks",
+                    "4a71004f-08fb-4e87-a52c-bee7fe3ac791",
+                    "status"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "refresh_token",
+      "secret": true
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ]
+}

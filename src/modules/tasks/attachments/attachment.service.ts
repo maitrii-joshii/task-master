@@ -106,7 +106,6 @@ export const getTaskAttachments = async (taskId: string, userId: string) => {
           id: true,
           name: true,
           email: true,
-          avatarUrl: true,
         },
       },
     },
@@ -128,7 +127,6 @@ export const getAttachmentById = async (taskId: string, attachmentId: string, us
           id: true,
           name: true,
           email: true,
-          avatarUrl: true,
         },
       },
       task: {

@@ -11,6 +11,7 @@ import {
 
 import {
   createTaskController,
+  generateTaskDescriptionController,
   getTaskByIdController,
   getTasksController,
   updateTaskController,
@@ -39,22 +40,14 @@ import { upload } from "./attachments/attachment.upload";
 /**
  * @swagger
  * tags:
- *   name: Tasks
- *   description: Task management
- */
-
-/**
- * @swagger
- * tags:
- *   name: Comments
- *   description: Comments on tasks
- */
-
-/**
- * @swagger
- * tags:
- *   name: Attachments
- *   description: File attachments for tasks
+ *   - name: Tasks
+ *     description: Task management
+ *   - name: AI
+ *     description: AI-powered task features
+ *   - name: Comments
+ *     description: Comments on tasks
+ *   - name: Attachments
+ *     description: File attachments for tasks
  */
 
 const router = Router();
@@ -68,7 +61,8 @@ const router = Router();
  * /tasks:
  *   post:
  *     summary: Create a new task
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -88,7 +82,7 @@ const router = Router();
  *               description:
  *                 type: string
  *                 maxLength: 4500
- *                 example: Implement JWT authentication and refresh token flow
+ *                 example: Implement JWT authentication
  *               dueDate:
  *                 type: string
  *                 format: date-time
@@ -111,14 +105,141 @@ const router = Router();
  */
 router.post("/", authenticate, createTaskController);
 
+/* ============================================================
+   AI
+   ============================================================ */
+
+/**
+ * @swagger
+ * /tasks/ai/generate-description:
+ *   post:
+ *     summary: Generate a task description using AI
+ *     description: Generates a task description from a task title using the configured AI model.
+ *     tags:
+ *       - AI
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 minLength: 1
+ *                 example: Implement JWT authentication
+ *     responses:
+ *       200:
+ *         description: Task description generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *                       example: Implement JWT authentication
+ *                     description:
+ *                       type: string
+ *                       example: Implement secure JWT-based authentication for user login and protected API endpoints.
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Authentication required
+ *       500:
+ *         description: AI service error
+ */
+router.post("/ai/generate-description", authenticate, generateTaskDescriptionController);
+
+/* ============================================================
+   GET TASKS
+   ============================================================ */
+
 /**
  * @swagger
  * /tasks:
  *   get:
  *     summary: Get tasks
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [TODO, IN_PROGRESS, COMPLETED]
+ *         description: Filter tasks by status
+ *       - in: query
+ *         name: projectId
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: assigneeId
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: creatorId
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *       - in: query
+ *         name: search
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Search by title or description
+ *       - in: query
+ *         name: sortBy
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - createdAt
+ *             - updatedAt
+ *             - dueDate
+ *             - title
+ *             - status
+ *       - in: query
+ *         name: sortOrder
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - asc
+ *             - desc
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
  *     responses:
  *       200:
  *         description: Tasks retrieved successfully
@@ -129,12 +250,17 @@ router.post("/", authenticate, createTaskController);
  */
 router.get("/", authenticate, getTasksController);
 
+/* ============================================================
+   TASK BY ID
+   ============================================================ */
+
 /**
  * @swagger
  * /tasks/{id}:
  *   get:
  *     summary: Get a task by ID
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -144,7 +270,6 @@ router.get("/", authenticate, getTasksController);
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
  *     responses:
  *       200:
  *         description: Task retrieved successfully
@@ -153,18 +278,23 @@ router.get("/", authenticate, getTasksController);
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to view the task
+ *         description: User is not authorized
  *       404:
  *         description: Task not found
  */
 router.get("/:id", authenticate, validateParams(idParamSchema), getTaskByIdController);
+
+/* ============================================================
+   UPDATE TASK
+   ============================================================ */
 
 /**
  * @swagger
  * /tasks/{id}:
  *   patch:
  *     summary: Update a task
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -174,7 +304,26 @@ router.get("/:id", authenticate, validateParams(idParamSchema), getTaskByIdContr
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 maxLength: 90
+ *               description:
+ *                 type: string
+ *                 maxLength: 4500
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *               assigneeId:
+ *                 type: string
+ *                 format: uuid
+ *                 nullable: true
  *     responses:
  *       200:
  *         description: Task updated successfully
@@ -183,18 +332,23 @@ router.get("/:id", authenticate, validateParams(idParamSchema), getTaskByIdContr
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to update the task
+ *         description: User is not authorized
  *       404:
  *         description: Task not found
  */
 router.patch("/:id", authenticate, validateParams(idParamSchema), updateTaskController);
+
+/* ============================================================
+   DELETE TASK
+   ============================================================ */
 
 /**
  * @swagger
  * /tasks/{id}:
  *   delete:
  *     summary: Delete a task
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -204,27 +358,29 @@ router.patch("/:id", authenticate, validateParams(idParamSchema), updateTaskCont
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
  *     responses:
  *       204:
  *         description: Task deleted successfully
- *       400:
- *         description: Invalid task ID
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to delete the task
+ *         description: User is not authorized
  *       404:
  *         description: Task not found
  */
 router.delete("/:id", authenticate, validateParams(idParamSchema), deleteTaskController);
+
+/* ============================================================
+   ASSIGN TASK
+   ============================================================ */
 
 /**
  * @swagger
  * /tasks/{id}/assign:
  *   patch:
  *     summary: Assign a task to a user
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -234,7 +390,19 @@ router.delete("/:id", authenticate, validateParams(idParamSchema), deleteTaskCon
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - assigneeId
+ *             properties:
+ *               assigneeId:
+ *                 type: string
+ *                 format: uuid
+ *                 example: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
  *     responses:
  *       200:
  *         description: Task assigned successfully
@@ -243,18 +411,23 @@ router.delete("/:id", authenticate, validateParams(idParamSchema), deleteTaskCon
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to assign the task
+ *         description: User is not authorized
  *       404:
  *         description: Task or assignee not found
  */
 router.patch("/:id/assign", authenticate, validateParams(idParamSchema), assignTaskController);
+
+/* ============================================================
+   UPDATE TASK STATUS
+   ============================================================ */
 
 /**
  * @swagger
  * /tasks/{id}/status:
  *   patch:
  *     summary: Update task status
- *     tags: [Tasks]
+ *     tags:
+ *       - Tasks
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -264,7 +437,22 @@ router.patch("/:id/assign", authenticate, validateParams(idParamSchema), assignT
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - TODO
+ *                   - IN_PROGRESS
+ *                   - COMPLETED
+ *                 example: COMPLETED
  *     responses:
  *       200:
  *         description: Task status updated successfully
@@ -273,7 +461,7 @@ router.patch("/:id/assign", authenticate, validateParams(idParamSchema), assignT
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to update task status
+ *         description: User is not authorized
  *       404:
  *         description: Task not found
  */
@@ -293,7 +481,8 @@ router.patch(
  * /tasks/{taskId}/comments:
  *   post:
  *     summary: Create a comment on a task
- *     tags: [Comments]
+ *     tags:
+ *       - Comments
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -320,14 +509,6 @@ router.patch(
  *     responses:
  *       201:
  *         description: Comment created successfully
- *       400:
- *         description: Validation failed
- *       401:
- *         description: Authentication required
- *       403:
- *         description: User is not authorized to comment on this task
- *       404:
- *         description: Task not found
  */
 router.post(
   "/:taskId/comments",
@@ -341,7 +522,8 @@ router.post(
  * /tasks/{taskId}/comments:
  *   get:
  *     summary: Get all comments for a task
- *     tags: [Comments]
+ *     tags:
+ *       - Comments
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -354,14 +536,6 @@ router.post(
  *     responses:
  *       200:
  *         description: Comments retrieved successfully
- *       400:
- *         description: Invalid task ID
- *       401:
- *         description: Authentication required
- *       403:
- *         description: User is not authorized to view comments
- *       404:
- *         description: Task not found
  */
 router.get(
   "/:taskId/comments",
@@ -375,7 +549,8 @@ router.get(
  * /tasks/{taskId}/comments/{commentId}:
  *   get:
  *     summary: Get a single comment
- *     tags: [Comments]
+ *     tags:
+ *       - Comments
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -394,14 +569,6 @@ router.get(
  *     responses:
  *       200:
  *         description: Comment retrieved successfully
- *       400:
- *         description: Invalid task or comment ID
- *       401:
- *         description: Authentication required
- *       403:
- *         description: User is not authorized to view this comment
- *       404:
- *         description: Comment not found
  */
 router.get(
   "/:taskId/comments/:commentId",
@@ -415,7 +582,8 @@ router.get(
  * /tasks/{taskId}/comments/{commentId}:
  *   patch:
  *     summary: Update a comment
- *     tags: [Comments]
+ *     tags:
+ *       - Comments
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -444,18 +612,9 @@ router.get(
  *                 type: string
  *                 minLength: 1
  *                 maxLength: 1500
- *                 example: Updated comment content.
  *     responses:
  *       200:
  *         description: Comment updated successfully
- *       400:
- *         description: Validation failed
- *       401:
- *         description: Authentication required
- *       403:
- *         description: User is not authorized to update this comment
- *       404:
- *         description: Comment not found
  */
 router.patch(
   "/:taskId/comments/:commentId",
@@ -469,7 +628,8 @@ router.patch(
  * /tasks/{taskId}/comments/{commentId}:
  *   delete:
  *     summary: Delete a comment
- *     tags: [Comments]
+ *     tags:
+ *       - Comments
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -479,23 +639,9 @@ router.patch(
  *         schema:
  *           type: string
  *           format: uuid
- *       - in: path
- *         name: commentId
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
  *     responses:
  *       204:
  *         description: Comment deleted successfully
- *       400:
- *         description: Invalid task or comment ID
- *       401:
- *         description: Authentication required
- *       403:
- *         description: User is not authorized to delete this comment
- *       404:
- *         description: Comment not found
  */
 router.delete(
   "/:taskId/comments/:commentId",
@@ -513,17 +659,19 @@ router.delete(
  * /tasks/{taskId}/attachments:
  *   post:
  *     summary: Upload an attachment to a task
- *     tags: [Attachments]
+ *     description: Upload a file and attach it to an existing task.
+ *     tags:
+ *       - Attachments
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
  *         required: true
+ *         description: Task ID
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
  *     requestBody:
  *       required: true
  *       content:
@@ -545,7 +693,7 @@ router.delete(
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to upload an attachment
+ *         description: User is not authorized to upload attachment
  *       404:
  *         description: Task not found
  */
@@ -562,17 +710,18 @@ router.post(
  * /tasks/{taskId}/attachments:
  *   get:
  *     summary: Get all attachments for a task
- *     tags: [Attachments]
+ *     tags:
+ *       - Attachments
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
  *         required: true
+ *         description: Task ID
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
  *     responses:
  *       200:
  *         description: Attachments retrieved successfully
@@ -581,7 +730,7 @@ router.post(
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to view attachments
+ *         description: User is not authorized
  *       404:
  *         description: Task not found
  */
@@ -597,24 +746,25 @@ router.get(
  * /tasks/{taskId}/attachments/{attachmentId}:
  *   get:
  *     summary: Get an attachment by ID
- *     tags: [Attachments]
+ *     tags:
+ *       - Attachments
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
  *         required: true
+ *         description: Task ID
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
  *       - in: path
  *         name: attachmentId
  *         required: true
+ *         description: Attachment ID
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Attachment ID
  *     responses:
  *       200:
  *         description: Attachment retrieved successfully
@@ -623,7 +773,7 @@ router.get(
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to view this attachment
+ *         description: User is not authorized
  *       404:
  *         description: Attachment not found
  */
@@ -639,24 +789,25 @@ router.get(
  * /tasks/{taskId}/attachments/{attachmentId}:
  *   delete:
  *     summary: Delete an attachment
- *     tags: [Attachments]
+ *     tags:
+ *       - Attachments
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: taskId
  *         required: true
+ *         description: Task ID
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Task ID
  *       - in: path
  *         name: attachmentId
  *         required: true
+ *         description: Attachment ID
  *         schema:
  *           type: string
  *           format: uuid
- *         description: Attachment ID
  *     responses:
  *       204:
  *         description: Attachment deleted successfully
@@ -665,7 +816,7 @@ router.get(
  *       401:
  *         description: Authentication required
  *       403:
- *         description: User is not authorized to delete this attachment
+ *         description: User is not authorized to delete attachment
  *       404:
  *         description: Attachment not found
  */
